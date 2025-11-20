@@ -1,0 +1,12 @@
+name = "ucsb-course-helper"
+main = "src/worker.js"
+compatibility_date = "2024-10-10"
+
+[durable_objects]
+bindings = [
+  { name = "MEMORY", class_name = "MemoryDO" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["MemoryDO"]

@@ -1,0 +1,3 @@
+# UCSB Course Helper (Cloudflare AI Assignment)
+
+This project is a lightweight AI-powered study assistant built on Cloudflare...
