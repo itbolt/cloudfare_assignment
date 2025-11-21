@@ -1,40 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>UCSB Course Helper</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        #chatBox {
+        #chat {
             width: 100%;
             height: 400px;
             border: 1px solid #ccc;
             padding: 10px;
             overflow-y: auto;
             white-space: pre-wrap;
-            margin-bottom: 15px;
-            background: #fafafa;
-        }
-
-        #inputBox {
-            width: 70%;
-            padding: 10px;
-            font-size: 16px;
-        }
-
-        #sendBtn {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-left: 10px;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -42,12 +17,49 @@
 
 <h1>UCSB Course Helper</h1>
 
-<div id="chatBox"></div>
+<div id="chat"></div>
 
-<input id="inputBox" placeholder="Ask something..." />
-<button id="sendBtn">Send</button>
+<br>
 
-<script src="chat.js"></script>
+<input id="msg" type="text" placeholder="Ask something..." style="width:300px;">
+<button onclick="sendMessage()">Send</button>
+
+<script>
+const WORKER_URL = "https://ucsb-course-helper.MINHTIEN-NGUYEN345.workers.dev/chat";  
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// REPLACE with your real workers.dev URL
+// DO NOT use /chat on your Pages site — that will always 405.
+
+async function sendMessage() {
+    const input = document.getElementById("msg");
+    const chat = document.getElementById("chat");
+
+    const message = input.value.trim();
+    if (!message) return;
+
+    chat.innerHTML += "You: " + message + "\n";
+    input.value = "";
+
+    try {
+        const res = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message })
+        });
+
+        if (!res.ok) {
+            chat.innerHTML += "⚠ Server error: " + res.status + "\n";
+            return;
+        }
+
+        const data = await res.json();
+        chat.innerHTML += "Bot: " + data.reply + "\n";
+
+    } catch (err) {
+        chat.innerHTML += "⚠ Network error\n";
+    }
+}
+</script>
 
 </body>
 </html>
