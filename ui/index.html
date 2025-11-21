@@ -1,54 +1,49 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>UCSB Course Helper</title>
-    <style>
-      body { 
-        font-family: Arial, sans-serif; 
-        margin: 40px; 
-      }
-      #log { 
-        white-space: pre-wrap; 
-        border: 1px solid #ccc; 
-        padding: 10px; 
-        height: 300px; 
-        overflow-y: auto; 
-      }
-      input { padding: 6px; width: 300px; }
-      button { padding: 6px 10px; }
-    </style>
-  </head>
-  <body>
+</head>
+<body>
     <h1>UCSB Course Helper</h1>
-    <div id="log"></div>
+
+    <div id="messages" style="white-space: pre-wrap; border:1px solid #ccc; padding:10px; width:90%; height:400px; overflow-y:auto;"></div>
+
     <br>
 
-    <input id="msg" placeholder="Ask something..." />
-    <button onclick="sendMessage()">Send</button>
+    <input id="input" placeholder="Ask something..." style="width:300px;">
+    <button onclick="send()">Send</button>
 
     <script>
-      async function sendMessage() {
-        const m = document.getElementById("msg").value;
-        document.getElementById("msg").value = "";
+        const messages = document.getElementById("messages");
 
-        log("You: " + m);
+        function addMessage(text) {
+            messages.textContent += text + "\n";
+        }
 
-        const res = await fetch("/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message })
-        });
+        async function send() {
+            const text = document.getElementById("input").value;
+            addMessage("You: " + text);
+            document.getElementById("input").value = "";
 
+            try {
+                const res = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: text })
+                });
 
-        const data = await res.json();
-        log("AI: " + data.reply);
-      }
+                if (!res.ok) {
+                    addMessage("⚠️ Server error: " + res.status);
+                    return;
+                }
 
-      function log(t) {
-        const l = document.getElementById("log");
-        l.textContent += t + "\n";
-        l.scrollTop = l.scrollHeight;
-      }
+                const data = await res.text();
+                addMessage("Bot: " + data);
+
+            } catch (err) {
+                addMessage("❌ Network error");
+            }
+        }
     </script>
-  </body>
+</body>
 </html>
