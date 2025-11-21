@@ -1,2 +1,53 @@
 <!DOCTYPE html>
-<html><body>UCSB Course Helper</body></html>
+<html>
+  <head>
+    <title>UCSB Course Helper</title>
+    <style>
+      body { 
+        font-family: Arial, sans-serif; 
+        margin: 40px; 
+      }
+      #log { 
+        white-space: pre-wrap; 
+        border: 1px solid #ccc; 
+        padding: 10px; 
+        height: 300px; 
+        overflow-y: auto; 
+      }
+      input { padding: 6px; width: 300px; }
+      button { padding: 6px 10px; }
+    </style>
+  </head>
+  <body>
+    <h1>UCSB Course Helper</h1>
+    <div id="log"></div>
+    <br>
+
+    <input id="msg" placeholder="Ask something..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+      async function sendMessage() {
+        const m = document.getElementById("msg").value;
+        document.getElementById("msg").value = "";
+
+        log("You: " + m);
+
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: m })
+        });
+
+        const data = await res.json();
+        log("AI: " + data.reply);
+      }
+
+      function log(t) {
+        const l = document.getElementById("log");
+        l.textContent += t + "\n";
+        l.scrollTop = l.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
