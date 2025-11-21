@@ -33,7 +33,7 @@
 
         log("You: " + m);
 
-        const res = await fetch("/chat", {
+        const res = await fetch("https://ucsb-course-helper.minhtien-nguyen345.workers.dev/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: m })
