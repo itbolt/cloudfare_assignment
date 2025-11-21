@@ -1,4 +1,4 @@
-name = "ucsb-course-helper"
+name = "cloudfare-assignment"
 main = "src/worker.js"
 compatibility_date = "2024-10-10"
 
